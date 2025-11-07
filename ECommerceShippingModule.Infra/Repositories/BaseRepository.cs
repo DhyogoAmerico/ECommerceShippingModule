@@ -7,7 +7,7 @@ public abstract class BaseRepository<TEntity> : IRepository<TEntity> where TEnti
 {
     protected HashSet<TEntity> Entities { get; set; }
 
-    public void AddAsync(TEntity entity)
+    public void Add(TEntity entity)
     {
         Entities.Add(entity);
     }
@@ -17,7 +17,7 @@ public abstract class BaseRepository<TEntity> : IRepository<TEntity> where TEnti
         Entities.Remove(entity);
     }
 
-    public TEntity? GetByIdAsync(Guid id)
+    public TEntity GetById(Guid id)
     {
         return Entities.FirstOrDefault(o => o.Id == id);
     }
@@ -26,5 +26,10 @@ public abstract class BaseRepository<TEntity> : IRepository<TEntity> where TEnti
     {
         Entities.RemoveWhere(o => o.Id == entity.Id);
         Entities.Add(entity);
+    }
+
+    public IList<TEntity> GetAll()
+    {
+        return Entities.ToList();
     }
 }

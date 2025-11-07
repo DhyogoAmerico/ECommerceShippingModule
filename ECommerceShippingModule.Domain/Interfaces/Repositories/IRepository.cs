@@ -2,8 +2,9 @@
 
 public interface IRepository<T>
 {
-    T? GetByIdAsync(Guid id);
-    void AddAsync(T entity);
+    T GetById(Guid id);
+    IList<T> GetAll();
+    void Add(T entity);
     void Update(T entity);
     void Delete(T entity);
 }

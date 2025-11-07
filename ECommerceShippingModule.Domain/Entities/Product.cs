@@ -3,7 +3,7 @@
 public class Product : EntityBase
 {
     public string Name { get; set; }
-    public double Weight { get; set; }
+    public decimal Weight { get; set; }
     private Product() { }
     public Product(string name, double weight)
     {
