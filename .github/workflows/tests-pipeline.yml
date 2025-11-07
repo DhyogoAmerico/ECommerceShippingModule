@@ -1,0 +1,33 @@
+# .github/workflows/ci-pipeline.yml
+name: CI Pipeline
+
+# Gatilho: Este workflow roda a cada push ou pull request na branch 'master'
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:  # Permite execução manual
+
+# Tarefas a serem executadas
+jobs:
+  # Nome da tarefa
+  build-and-test:
+    # Máquina virtual onde a tarefa vai rodar
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore ./ECommerceShippingModule.sln
+
+      - name: Build solution
+        run: dotnet build ./ECommerceShippingModule.sln --configuration Release --no-restore
+
+      - name: Run tests
+        run: dotnet test ./ECommerceShippingModule.sln --configuration Release --no-build --verbosity normal

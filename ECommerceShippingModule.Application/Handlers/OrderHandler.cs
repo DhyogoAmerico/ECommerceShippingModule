@@ -14,7 +14,6 @@ public class OrderHandler : BaseHandler, IOrderHandler
     private readonly IOrderRepository orderRepository;
     private readonly IShippingCalculateFactory shippingCalculateFactory;
     public OrderHandler(IOrderRepository orderRepository,
-                        IValidator<CreateOrderInput> orderValidator,
                         IShippingCalculateFactory shippingCalculateFactory)
     {
         this.orderRepository = orderRepository;
