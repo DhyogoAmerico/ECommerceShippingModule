@@ -2,7 +2,7 @@
 
 namespace ECommerceShippingModule.Application.Inputs;
 
-public class OrderInput
+public class UpdateOrderInput
 {
     public Guid Id { get; set; }
     public Guid ClientId { get; set; }

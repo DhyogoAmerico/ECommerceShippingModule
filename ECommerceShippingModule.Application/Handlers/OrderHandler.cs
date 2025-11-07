@@ -2,33 +2,28 @@
 using ECommerceShippingModule.Application.Intefaces.Handlers;
 using ECommerceShippingModule.Application.Intefaces.Services;
 using ECommerceShippingModule.Application.Outputs;
+using ECommerceShippingModule.Application.Validators;
 using ECommerceShippingModule.Domain.Entities;
 using ECommerceShippingModule.Domain.Interfaces.Repositories;
 using FluentValidation;
 
 namespace ECommerceShippingModule.Application.Handlers;
 
-public class OrderHandler : IOrderHandler
+public class OrderHandler : BaseHandler, IOrderHandler
 {
     private readonly IOrderRepository orderRepository;
-    private readonly IValidator<OrderInput> orderValidator;
     private readonly IShippingCalculateFactory shippingCalculateFactory;
     public OrderHandler(IOrderRepository orderRepository,
-                        IValidator<OrderInput> orderValidator,
+                        IValidator<CreateOrderInput> orderValidator,
                         IShippingCalculateFactory shippingCalculateFactory)
     {
         this.orderRepository = orderRepository;
-        this.orderValidator = orderValidator;
         this.shippingCalculateFactory = shippingCalculateFactory;
     }
 
-    public OrderOutput Create(OrderInput orderInput)
+    public OrderOutput Create(CreateOrderInput orderInput)
     {
-        var resultValidator = orderValidator.Validate(orderInput);
-        if (!resultValidator.IsValid)
-        {
-            throw new ValidationException(resultValidator.Errors);
-        }
+        Validate(new CreateOrderValidator(), orderInput);
 
         var calculator = shippingCalculateFactory.GetShippingCalculateService(orderInput.ShippingMode);
         var shippingValue = calculator.Calculate(orderInput.Weight, orderInput.Distance);
@@ -56,8 +51,25 @@ public class OrderHandler : IOrderHandler
         return orderRepository.GetAll().Select(order => (OrderOutput)order).ToList();
     }
 
-    public OrderOutput Update(OrderInput orderInput)
+    public OrderOutput Update(UpdateOrderInput orderInput)
     {
-        
+        var order = orderRepository.GetById(orderInput.Id);
+
+        if (order is null)
+            throw new KeyNotFoundException("Order not found.");
+
+        Validate(new UpdateOrderValidator(), orderInput);
+
+        var calculator = shippingCalculateFactory.GetShippingCalculateService(orderInput.ShippingMode);
+        var shippingValue = calculator.Calculate(orderInput.Weight, orderInput.Distance);
+
+        order.Distance = orderInput.Distance;
+        order.Weight = orderInput.Weight;
+        order.ShippingMode = orderInput.ShippingMode;
+        order.ShippingValue = shippingValue;
+
+        orderRepository.Update(order);
+
+        return (OrderOutput)order;
     }
 }

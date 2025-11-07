@@ -2,8 +2,9 @@
 
 namespace ECommerceShippingModule.Domain.Entities;
 
-public class Order : EntityBase
+public class Order
 {
+    public Guid Id { get; set; }
     public Guid ClientId { get; set; }
     public decimal ShippingValue { get; set; }
     public ShippingMode ShippingMode { get; set; }

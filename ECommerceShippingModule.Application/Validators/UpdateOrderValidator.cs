@@ -3,10 +3,13 @@ using FluentValidation;
 
 namespace ECommerceShippingModule.Application.Validators;
 
-public class OrderValidator : AbstractValidator<OrderInput>
+public class UpdateOrderValidator : AbstractValidator<UpdateOrderInput>
 {
-    public OrderValidator()
+    public UpdateOrderValidator()
     {
+        RuleFor(order => order.Id)
+            .NotNull()
+            .WithMessage("Id is required.");
         RuleFor(order => order.ClientId)
             .NotNull()
             .WithMessage("ClientId is required.");
